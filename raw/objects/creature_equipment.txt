@@ -11,9 +11,6 @@ creature_equipment
 	[NOT_BUTCHERABLE]
 	[BODY:WAGON]
 	[USE_MATERIAL_TEMPLATE:METAL:METAL_TEMPLATE]
-
-	Wagons-as-creatures is most likely going to be replaced once moving siege engines are in, so we'll just use a generic "wood" material here instead of worrying about coding up race glosses again.'
-
 	[TISSUE:METAL]
 		[TISSUE_NAME:metal:metal]
 		[TISSUE_MATERIAL:LOCAL_CREATURE_MAT:METAL]
