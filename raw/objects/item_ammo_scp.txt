@@ -1,0 +1,12 @@
+item_ammo_scp
+[OBJECT:ITEM]
+	[ITEM_AMMO:RIFLE_AMMO]
+		[NAME:rifle cartridge:rifle ammo]
+		[CLASS:RIFLE]
+		[SIZE:185]
+		[ATTACK:EDGE:50:12000:do something really dumb:does something really dumb:NO_SUB:2500]
+	[ITEM_AMMO:PISTOL_AMMO]
+		[NAME:pistol cartridge:pistol ammo]
+		[CLASS:PISTOL]
+		[SIZE:100]
+		[ATTACK:EDGE:50:12000:do something really dumb:does something really dumb:NO_SUB:2500]

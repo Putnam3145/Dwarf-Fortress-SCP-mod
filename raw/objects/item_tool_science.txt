@@ -1,0 +1,33 @@
+item_tool_science
+
+[OBJECT:ITEM]
+
+[ITEM_TOOL:STRANGEHEAL]
+[NAME:strange remains of a healer nadaksodel:strange remains of a healer nadaksodel]
+[VALUE:1]
+[TILE:253]
+[SIZE:50]
+
+[ITEM_TOOL:BATTERY_ONE_USE]
+[NAME:non-rechargeable battery:non-rechargeable batteries]
+[VALUE:5]
+[TILE:18]
+[SIZE:62]
+
+[ITEM_TOOL:BATTERY_RECHARGEABLE_EMPTY]
+[NAME:rechargeable battery (empty):rechargeable batteries (empty)]
+[VALUE:3]
+[TILE:18]
+[SIZE:10]
+
+[ITEM_TOOL:BATTERY_RECHARGEABLE_FULL]
+[NAME:rechargeable battery (full):rechargeable batteries (empty)]
+[VALUE:8]
+[TILE:18]
+[SIZE:10]
+
+[ITEM_TOOL:BATTERY_INSTRUCTIONS]
+[NAME:a piece on electricity and harnessing power in a container:pieces on electricity and harnessing power in a container]
+[VALUE:10]
+[TILE:239]
+[SIZE:50]
