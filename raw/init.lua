@@ -50,11 +50,10 @@ end
 
 eventful.registerReaction("LUA_HOOK_RECHARGE_BATTERY",chargeBattery)
 eventful.registerReaction("LUA_HOOK_RECHARGE_BATTERY_FUEL",chargeBattery)
-eventful.registerReaction("LUA_HOOK_ELECTROWINNING_NON",drainBattery)
-eventful.registerReaction("LUA_HOOK_ELECTROWINNING_RE",drainBattery)
-eventful.registerReaction("LUA_HOOK_ELECTROPLATING_LEAD_NON",drainBattery)
-eventful.registerReaction("LUA_HOOK_ELECTROPLATING_LEAD_RE",drainBattery)
+eventful.registerReaction("LUA_HOOK_ELECTROWINNING",drainBattery)
+eventful.registerReaction("LUA_HOOK_ELECTROPLATING_LEAD",drainBattery)
 eventful.registerReaction("LUA_HOOK_CHECK_BATTERY_POWER_P",getCharge)
+eventful.registerReaction("LUA_HOOK_RECHARGE_BATTERY_117",chargeBattery)
 
 local scp_447_index=dfhack.matinfo.find("SCP_447_2").index
 
