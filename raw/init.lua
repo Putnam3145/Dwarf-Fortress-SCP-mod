@@ -68,7 +68,7 @@ end
 local function initializeCorpseCheck(corpse,ArgDelayTicks)
     corpsesToCheck[corpse.id]={delayTicks=2,corpseID=corpse.id}
     function corpsesToCheck[corpse.id].checkFor447(self)
-		local corpse=df.item.find(self.corpseID)
+        local corpse=df.item.find(self.corpseID)
         if not (corpse.flags.in_inventory or corpse.flags.in_building) then 
             if corpse.contaminants then
                 for k,contaminant in ipairs(corpse.contaminants) do
@@ -82,9 +82,9 @@ local function initializeCorpseCheck(corpse,ArgDelayTicks)
                 end
             end
         end
-       self.delayTicks=self.delayTicks<1024 and self.delayTicks*2 or self.delayTicks
-       dfhack.timeout(self.delayTicks,'ticks',function() self:checkFor447 end)
-       return false
+        self.delayTicks=self.delayTicks<1024 and self.delayTicks*2 or self.delayTicks
+        dfhack.timeout(self.delayTicks,'ticks',function() self:checkFor447 end)
+        return false
     end
     dfhack.timeout(ArgDelayTicks,'ticks',function() corpsesToCheck[corpse.id]:checkFor447() end)
 end
@@ -92,8 +92,8 @@ end
 local function initializeCorpseChecks()
     local totalDelayTicks=1
     for _,corpse in ipairs(df.global.world.items.other.ANY_CORPSE) do
-		initializeCorpseCheck(corpse,totalDelayTicks)
-		totalDelayTicks=totalDelayTicks+2
+        initializeCorpseCheck(corpse,totalDelayTicks)
+        totalDelayTicks=totalDelayTicks+2
     end
 end
 
