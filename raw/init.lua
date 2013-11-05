@@ -1,5 +1,8 @@
 eventful=require("plugins.eventful")
 
+----------------------------------------
+--------------- SCP-447 ----------------
+----------------------------------------
 function itemIsBattery(item)
     return (df.item_toolst:is_instance(item) and string.find(string.lower(item.subtype.name[0]),"battery"))
 end
@@ -97,17 +100,127 @@ local function initializeCorpseChecks()
 end
 
 local function findCorpseGivenID(unit_id)
-	for i=#df.global.world.items.other.ANY_CORPSE-1,0,-1 do
-		local corpse = df.global.world.items.other.ANY_CORPSE[i]
-		if corpse.unit_id==unit_id then return corpse end
-	end
-	return nil
+    for i=#df.global.world.items.other.ANY_CORPSE-1,0,-1 do
+        local corpse = df.global.world.items.other.ANY_CORPSE[i]
+        if corpse.unit_id==unit_id then return corpse end
+    end
+    return nil
 end
 
 eventful.enableEvent(eventful.eventType.UNIT_DEATH,5)
 
-eventful.onUnitDeath.SCP=function(unit_id)
-	initializeCorpseCheck(findCorpseGivenID(unit_id),1)
+eventful.onUnitDeath.SCP_447=function(unit_id)
+    initializeCorpseCheck(findCorpseGivenID(unit_id),1)
 end
 
 initializeCorpseChecks()
+
+----------------------------------------
+--------------- SCP-294 ----------------
+----------------------------------------
+
+-- this section of script makes me feel like I'm violating these strings
+
+function cleanString(str)
+    if not str then return '' end
+    return str:lower():gsub('%W','')
+end
+
+function desperatelyAttemptToMatchStrings(str1,str2)
+    if not str1 or not str2 then return false end
+    return cleanString(str1):find(cleanString(str2)) or cleanString(str2):find(cleanString(str1))
+end
+
+function findPlant(str,desparate)
+    --ugly ugly function, but this whole script is ugly
+    if desparate then
+        for k,v in ipairs(df.global.world.raws.plants.all) do
+            if desperatelyAttemptToMatchStrings(str,v.id) or desperatelyAttemptToMatchStrings(str,v.name) then return {v,'plant'} end
+        end
+    else
+        for k,v in ipairs(df.global.world.raws.plants.all) do
+            if cleanString(str)==cleanString(v.id) or cleanString(v.name)==cleanString(str) then return {v,'plant'} end
+        end
+    end
+    return nil
+end
+
+function findCreature(str,desparate)
+    if desparate then
+        for k,v in ipairs(df.global.world.raws.creatures.all) do
+            if desperatelyAttemptToMatchStrings(str,v.creature_id) or desperatelyAttemptToMatchStrings(str,v.name[0]) then return {v,'creature'} end
+        end
+    else
+        for k,v in ipairs(df.global.world.raws.creatures.all) do
+            if cleanString(str)==cleanString(v.creature_id) then return {v,'creature'} end --the name equality is handled by the binsearch
+        end
+    end
+    return nil
+end
+
+function findMaterialGivenPlainLanguageString(str)
+    --not going to include odd substances :I
+    local str=str:gsub("'",''):gsub('"','')
+    local tokenStr=string.upper(str:gsub(' ','_'))
+    local moddedString=tokenStr:gsub('_',':')
+    for i=1,2 do
+        if i==1 then
+            moddedString='CREATURE:'..moddedString
+        else
+            moddedString='PLANT:'..moddedString
+        end
+        local find=dfhack.matinfo.find(tokenStr) or dfhack.matinfo.find(moddedString)
+        if find then return find.type,find.index end
+    end
+    str=string.lower(str:gsub('_',' ')) --making sure it's all nice for the ugly part
+    --this is the ugly part
+    local utils=require('utils')
+    local foundMatchingObject={}
+    for word in str:gmatch('%a+') do
+        --first, we search for an object, starting with a binsearch followed by a plant search followed by a creature search using a different creature identifier followed by a couple of nasty desparate searches.
+        local binsearchResult={utils.binsearch(df.global.world.raws.creatures.alphabetic,string.lower(word),'name',utils.compare_field_key(0))}
+        foundMatchingObject= not not foundMatchingObject[1]==true and foundMatchingObject or binsearchResult[2]==true and binsearchResult or findPlant(word) or findCreature(word) or findPlant(word,true) or findCreature(word,true)
+        if foundMatchingObject then
+            for k,v in ipairs(foundMatchingObject[1].material) do --then we desperately try to find a material that matches the object.
+                if desperatelyAttemptToMatchStrings(word,v.id) or desperatelyAttemptToMatchStrings(word,v.state_name.Liquid) or desperatelyAttemptToMatchStrings(word,v.state_name.Solid) or 
+                desperatelyAttemptToMatchStrings(str,v.id) or desperatelyAttemptToMatchStrings(str,v.state_name.Liquid) or desperatelyAttemptToMatchStrings(str,v.state_name.Solid) then
+                    if v.heat.melting_point~=60001 then
+                        if foundMatchingObject[2]==true or foundMatchingObject[2]=='creature' then
+                            local find = dfhack.matinfo.find('CREATURE:'..foundMatchingObject[1].creature_id..':'..v.id) --splitting the string doesn't work right now
+                            return find.type,find.index
+                        elseif foundMatchingObject[2]=='plant' then
+                            local find = dfhack.matinfo.find('PLANT:'..foundMatchingObject[1].id..':'..v.id)
+                            return find.type,find.index
+                        else
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+local script=require('gui/script')
+
+function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_native)
+    script.start(function()
+        local mattype,matindex
+        local ok,matString=script.showInputPrompt('SCP-294','Select your drink.',COLOR_WHITE)
+        if ok then
+            mattype,matindex=findMaterialGivenPlainLanguageString(matString)
+        else
+            return false
+        end
+        for k,v in ipairs(output_items) do
+            if v.product_to_container=='container' then
+                v.mat_type=mattype
+                v.mat_index=matindex
+            end
+        end
+    end)
+end
+eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_JUG',SCP_294)
+eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_FLASK',SCP_294)
+eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_BUCKET',SCP_294)
+eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_BARREL',SCP_294)
