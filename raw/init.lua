@@ -198,7 +198,7 @@ function findMaterialGivenPlainLanguageString(str)
             end
         end
     end
-    return false
+    return false,false
 end
 
 local script=require('gui/script')
@@ -206,12 +206,17 @@ local script=require('gui/script')
 function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_native)
     script.start(function()
         local mattype,matindex
-        local ok,matString=script.showInputPrompt('SCP-294','Select your drink.',COLOR_WHITE)
-        if ok then
-            mattype,matindex=findMaterialGivenPlainLanguageString(matString)
-        else
-            return false
-        end
+        repeat
+            local tryAgain
+            local ok,matString=script.showInputPrompt('SCP-294','Select your drink.',COLOR_LIGHTGREEN)
+            if ok then
+                mattype,matindex=findMaterialGivenPlainLanguageString(matString)
+            end
+            if not mattype then
+                script.showMessage('SCP-294','OUT OF RANGE',COLOR_LIGHTGREEN)
+                tryAgain=script.showYesNoPrompt('SCP-294','TRY AGAIN?',COLOR_LIGHTGREEN)
+            end
+        until not tryAgain or mattype
         for k,v in ipairs(output_items) do
             if v.product_to_container=='container' then
                 v.mat_type=mattype
