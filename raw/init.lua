@@ -1,8 +1,9 @@
 eventful=require("plugins.eventful")
 
-----------------------------------------
---------------- SCP-447 ----------------
-----------------------------------------
+----------------------------------
+----------- Batteries ------------
+----------------------------------
+
 function itemIsBattery(item)
     return (df.item_toolst:is_instance(item) and string.find(string.lower(item.subtype.name[0]),"battery"))
 end
@@ -57,6 +58,10 @@ eventful.registerReaction("LUA_HOOK_ELECTROWINNING",drainBattery)
 eventful.registerReaction("LUA_HOOK_ELECTROPLATING_LEAD",drainBattery)
 eventful.registerReaction("LUA_HOOK_CHECK_BATTERY_POWER_P",getCharge)
 eventful.registerReaction("LUA_HOOK_RECHARGE_BATTERY_117",chargeBattery)
+
+----------------------------------------
+--------------- SCP-447 ----------------
+----------------------------------------
 
 local scp_447_index=dfhack.matinfo.find("SCP_447_2").index
 
