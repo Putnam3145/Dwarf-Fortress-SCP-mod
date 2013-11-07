@@ -139,7 +139,8 @@ tweak military-training
 
 #Syndrome stuff
 enable autoSyndrome
-enable syndromeTrigger
+syndromeTrigger enable
+itemsyndrome enable
 
 ###########
 # Scripts #
