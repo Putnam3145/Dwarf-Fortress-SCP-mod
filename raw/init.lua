@@ -1,8 +1,8 @@
 eventful=require("plugins.eventful")
 
-----------------------------------
------------ Batteries ------------
-----------------------------------
+----------------------------------------
+--------------- BATTERY ----------------
+----------------------------------------
 
 function itemIsBattery(item)
     return (df.item_toolst:is_instance(item) and string.find(string.lower(item.subtype.name[0]),"battery"))
@@ -74,7 +74,7 @@ end
 
 local function initializeCorpseCheck(corpse,ArgDelayTicks)
     corpsesToCheck[corpse.id]={delayTicks=2,corpseID=corpse.id}
-    function corpsesToCheck[corpse.id].checkFor447(self)
+    corpsesToCheck[corpse.id].checkFor447=function(self)
         local corpse=df.item.find(self.corpseID)
         if not (corpse.flags.in_inventory or corpse.flags.in_building) then 
             if corpse.contaminants then
@@ -90,7 +90,7 @@ local function initializeCorpseCheck(corpse,ArgDelayTicks)
             end
         end
         self.delayTicks=self.delayTicks<1024 and self.delayTicks*2 or self.delayTicks
-        dfhack.timeout(self.delayTicks,'ticks',function() self:checkFor447 end)
+        dfhack.timeout(self.delayTicks,'ticks',function() self:checkFor447() end)
         return false
     end
     dfhack.timeout(ArgDelayTicks,'ticks',function() corpsesToCheck[corpse.id]:checkFor447() end)
@@ -147,7 +147,7 @@ function findPlant(str,desparate)
             if cleanString(str)==cleanString(v.id) or cleanString(v.name)==cleanString(str) then return {v,'plant'} end
         end
     end
-    return nil
+    return {false,nil}
 end
 
 function findCreature(str,desparate)
@@ -160,7 +160,7 @@ function findCreature(str,desparate)
             if cleanString(str)==cleanString(v.creature_id) then return {v,'creature'} end --the name equality is handled by the binsearch
         end
     end
-    return nil
+    return {false,nil}
 end
 
 function findMaterialGivenPlainLanguageString(str)
@@ -180,12 +180,12 @@ function findMaterialGivenPlainLanguageString(str)
     str=string.lower(str:gsub('_',' ')) --making sure it's all nice for the ugly part
     --this is the ugly part
     local utils=require('utils')
-    local foundMatchingObject={}
+	local foundMatchingObject={}
     for word in str:gmatch('%a+') do
         --first, we search for an object, starting with a binsearch followed by a plant search followed by a creature search using a different creature identifier followed by a couple of nasty desparate searches.
         local binsearchResult={utils.binsearch(df.global.world.raws.creatures.alphabetic,string.lower(word),'name',utils.compare_field_key(0))}
-        foundMatchingObject= not not foundMatchingObject[1]==true and foundMatchingObject or binsearchResult[2]==true and binsearchResult or findPlant(word) or findCreature(word) or findPlant(word,true) or findCreature(word,true)
-        if foundMatchingObject then
+        foundMatchingObject=foundMatchingObject[1]==true and foundMatchingObject or binsearchResult[2]==true and binsearchResult or findPlant(word) or findCreature(word) or findPlant(word,true) or findCreature(word,true)
+        if foundMatchingObject[1]==true then
             for k,v in ipairs(foundMatchingObject[1].material) do --then we desperately try to find a material that matches the object.
                 if desperatelyAttemptToMatchStrings(word,v.id) or desperatelyAttemptToMatchStrings(word,v.state_name.Liquid) or desperatelyAttemptToMatchStrings(word,v.state_name.Solid) or 
                 desperatelyAttemptToMatchStrings(str,v.id) or desperatelyAttemptToMatchStrings(str,v.state_name.Liquid) or desperatelyAttemptToMatchStrings(str,v.state_name.Solid) then
@@ -222,15 +222,18 @@ function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_nati
                 tryAgain=script.showYesNoPrompt('SCP-294','TRY AGAIN?',COLOR_LIGHTGREEN)
             end
         until not tryAgain or mattype
-        for k,v in ipairs(output_items) do
-            if v.product_to_container=='container' then
-                v.mat_type=mattype
-                v.mat_index=matindex
+		if mattype then
+            for k,v in ipairs(df.global.world.raws.reactions) do
+				if v.code:find('SCP_294_DISPENSE') then
+					for _,product in ipairs(v.products) do
+						if product.product_to_container=='container' then
+							product.mat_type=mattype
+							product.mat_index=matindex
+						end
+					end
+                end
             end
-        end
+		end
     end)
 end
-eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_JUG',SCP_294)
-eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_FLASK',SCP_294)
-eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_BUCKET',SCP_294)
-eventful.register_reaction('LUA_HOOK_SCP_294_DISPENSE_LIQUID_BARREL',SCP_294)
+eventful.registerReaction('LUA_HOOK_SCP_294_SELECT_LIQUID_FOR_DISPENSING',SCP_294)
