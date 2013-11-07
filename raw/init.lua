@@ -1,8 +1,8 @@
 eventful=require("plugins.eventful")
 
-----------------------------------------
---------------- BATTERY ----------------
-----------------------------------------
+----------------------------------
+----------- Batteries ------------
+----------------------------------
 
 function itemIsBattery(item)
     return (df.item_toolst:is_instance(item) and string.find(string.lower(item.subtype.name[0]),"battery"))
