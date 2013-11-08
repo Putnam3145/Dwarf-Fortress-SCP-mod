@@ -85,7 +85,7 @@ local function initializeCorpseCheck(corpse,ArgDelayTicks)
             local block_events = dfhack.maps.getTileBlock(corpse.pos).block_events
             for k,event in ipairs(block_events) do
                 if df.block_square_event_material_spatterst:is_instance(event) then
-                    if event.amount[corpse.pos.x%16][corpse.pos.y%16]>0 then forceGameOver("SCP-447-2 has been detected on a dead body. Immediate destruction of site authorized by O5s.") end
+                    if event.amount[corpse.pos.x%16][corpse.pos.y%16]>0 and dfhack.matinfo.decode(mat_type,mat_index)==dfhack.matinfo.find('SCP_447_2') then forceGameOver("SCP-447-2 has been detected on a dead body. Immediate destruction of site authorized by O5s.") end
                 end
             end
         end
@@ -115,7 +115,7 @@ end
 eventful.enableEvent(eventful.eventType.UNIT_DEATH,5)
 
 eventful.onUnitDeath.SCP_447=function(unit_id)
-    initializeCorpseCheck(findCorpseGivenID(unit_id),1)
+    initializeCorpseCheck(findCorpseGivenID(unit_id),8)
 end
 
 initializeCorpseChecks()
@@ -237,3 +237,54 @@ function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_nati
     end)
 end
 eventful.registerReaction('LUA_HOOK_SCP_294_SELECT_LIQUID_FOR_DISPENSING',SCP_294)
+--[[
+----------------------------------------
+--------------- SCP-963 ----------------
+----------------------------------------
+
+function getFoundationRace()
+	local race,ok=utils.binsearch(df.global.world.raws.creatures.alphabetic,'foundation member','name',utils.compare_field_key(0))
+	return ok and df.global.world.raws.creatures.list_creature[race.caste[0].index] or 0
+end
+
+function jackBrightHistFig()
+	i=#df.global.world.history.figures-1,0,-1 do
+		local fig = df.global.world.history.figures[i]
+		if fig.name.first_name=="dr. jack" then return fig,fig.id end
+	end
+	local brightFig=df.global.world.history.figures:insert('#',{new=df.historical_figure,profession=68,race=getFoundationRace(),caste=5,sex=1,appeared_year=df.global.cur_year-30,born_year=df.global.cur_year-30,born_seconds=0,old_year=-1,id=df.global.hist_figure_next_id})
+	df.global.hist_figure_next_id=df.global.hist_figure_next_id+1
+	brightFig.name.first_name='dr. jack'
+	local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')}
+	brightWord=brightWord[3]
+	brightFig.name.words[0]=brightWord
+	brightFig.name.parts_of_speech[0]=2
+	brightFig.info=df.historical_figure_info:new()
+	brightFig.info.skills=df.historical_figure_info.T_skills:new()
+	brightFig.info.skills.skills:insert('#',15)
+	brightFig.info.skills.points:insert('#',50000)
+	return brightFig,brightFig.id
+end
+
+function doctorBrightTakeOver(unit)
+	local oldFig=df.historical_figure.find(unit.hist_figure_id)
+	fig,unit.hist_figure_id=jackBrightHistFig()
+	fig.civ_id=oldFig.civ_id
+	fig.population_id=oldFig.population_id -- yeah, not right, but necessary
+	local allUnitNames={
+	unit.name,
+	unit.status.current_soul.name
+	}
+	local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')} --BRIGHT is within the sorted words, so it's good.
+	brightWord=brightWord[3]
+	for k,v in ipairs(allUnitNames) do
+		for kk,vv in ipairs(v.words) do
+			vv=-1
+			v.parts_of_speech[kk]=-1
+		end
+		v.words[0]=brightWord
+		v.parts_of_speech[0]=2
+		v.first_name="dr. jack"
+	end
+end
+]]
