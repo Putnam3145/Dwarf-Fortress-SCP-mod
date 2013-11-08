@@ -1,8 +1,8 @@
 eventful=require("plugins.eventful")
 
-----------------------------------------
---------------- BATTERY ----------------
-----------------------------------------
+----------------------------------
+----------- Batteries ------------
+----------------------------------
 
 function itemIsBattery(item)
     return (df.item_toolst:is_instance(item) and string.find(string.lower(item.subtype.name[0]),"battery"))
@@ -180,7 +180,7 @@ function findMaterialGivenPlainLanguageString(str)
     str=string.lower(str:gsub('_',' ')) --making sure it's all nice for the ugly part
     --this is the ugly part
     local utils=require('utils')
-	local foundMatchingObject={}
+    local foundMatchingObject={}
     for word in str:gmatch('%a+') do
         --first, we search for an object, starting with a binsearch followed by a plant search followed by a creature search using a different creature identifier followed by a couple of nasty desparate searches.
         local binsearchResult={utils.binsearch(df.global.world.raws.creatures.alphabetic,string.lower(word),'name',utils.compare_field_key(0))}
@@ -222,18 +222,18 @@ function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_nati
                 tryAgain=script.showYesNoPrompt('SCP-294','TRY AGAIN?',COLOR_LIGHTGREEN)
             end
         until not tryAgain or mattype
-		if mattype then
+        if mattype then
             for k,v in ipairs(df.global.world.raws.reactions) do
-				if v.code:find('SCP_294_DISPENSE') then
-					for _,product in ipairs(v.products) do
-						if product.product_to_container=='container' then
-							product.mat_type=mattype
-							product.mat_index=matindex
-						end
-					end
+                if v.code:find('SCP_294_DISPENSE') then
+                    for _,product in ipairs(v.products) do
+                        if product.product_to_container=='container' then
+                            product.mat_type=mattype
+                            product.mat_index=matindex
+                        end
+                    end
                 end
             end
-		end
+        end
     end)
 end
 eventful.registerReaction('LUA_HOOK_SCP_294_SELECT_LIQUID_FOR_DISPENSING',SCP_294)
