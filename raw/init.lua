@@ -237,54 +237,128 @@ function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_nati
     end)
 end
 eventful.registerReaction('LUA_HOOK_SCP_294_SELECT_LIQUID_FOR_DISPENSING',SCP_294)
---[[
+
 ----------------------------------------
 --------------- SCP-963 ----------------
 ----------------------------------------
 
 function getFoundationRace()
-	local race,ok=utils.binsearch(df.global.world.raws.creatures.alphabetic,'foundation member','name',utils.compare_field_key(0))
-	return ok and df.global.world.raws.creatures.list_creature[race.caste[0].index] or 0
+    local race,ok=utils.binsearch(df.global.world.raws.creatures.alphabetic,'foundation member','name',utils.compare_field_key(0))
+    return ok and df.global.world.raws.creatures.list_creature[race.caste[0].index] or 0
 end
 
 function jackBrightHistFig()
-	i=#df.global.world.history.figures-1,0,-1 do
-		local fig = df.global.world.history.figures[i]
-		if fig.name.first_name=="dr. jack" then return fig,fig.id end
-	end
-	local brightFig=df.global.world.history.figures:insert('#',{new=df.historical_figure,profession=68,race=getFoundationRace(),caste=5,sex=1,appeared_year=df.global.cur_year-30,born_year=df.global.cur_year-30,born_seconds=0,old_year=-1,id=df.global.hist_figure_next_id})
-	df.global.hist_figure_next_id=df.global.hist_figure_next_id+1
-	brightFig.name.first_name='dr. jack'
-	local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')}
-	brightWord=brightWord[3]
-	brightFig.name.words[0]=brightWord
-	brightFig.name.parts_of_speech[0]=2
-	brightFig.info=df.historical_figure_info:new()
-	brightFig.info.skills=df.historical_figure_info.T_skills:new()
-	brightFig.info.skills.skills:insert('#',15)
-	brightFig.info.skills.points:insert('#',50000)
-	return brightFig,brightFig.id
+    i=#df.global.world.history.figures-1,0,-1 do
+        local fig = df.global.world.history.figures[i]
+        if fig.name.first_name=="dr. jack" then return fig,fig.id end
+    end
+    local brightFig=df.global.world.history.figures:insert('#',{new=df.historical_figure,profession=68,race=getFoundationRace(),caste=5,sex=1,appeared_year=df.global.cur_year-30,born_year=df.global.cur_year-30,born_seconds=0,old_year=-1,id=df.global.hist_figure_next_id})
+    df.global.hist_figure_next_id=df.global.hist_figure_next_id+1
+    brightFig.name.first_name='dr. jack'
+    local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')}
+    brightWord=brightWord[3]
+    brightFig.name.words[0]=brightWord
+    brightFig.name.parts_of_speech[0]=2
+    brightFig.info=df.historical_figure_info:new()
+    brightFig.info.skills=df.historical_figure_info.T_skills:new()
+    brightFig.info.skills.skills:insert('#',15)
+    brightFig.info.skills.points:insert('#',15000)
+    return brightFig,brightFig.id
+end
+
+function setBrightPersonality(personality) --this will all be invalid in a month or so...
+    personality.ANXIETY=20
+    personality.ANGER=30
+    personality.DEPRESSION=50
+    personality.SELF_CONSCOUSNESS=3
+    personality.IMMODERATION=87
+    personality.STRESS=10
+    personality.FRIENDLINESS=75 --the descriptions given in-game doesn't say if it's a good kind of friendly :V
+    personality.GREGARIOUSNESS=75
+    personality.ASSERTIVENESS=100
+    personality.ACTIVITY_LEVEL=100
+    personality.EXCITEMENT_SEEKING=100
+    personality.CHEERFULNESS=15
+    personality.IMAGINATION=80
+    personality.ARTISTIC_INTEREST=45
+    personality.EMOTIONALITY=60
+    personality.ADVENTUROUSNESS=90
+    personality.INTELLECTUAL_CURIOSITY=90
+    personality.LIBERALISM=90
+    personality.TRUST=50
+    personality.STRAIGHTFORWARDNESS=1 --I don't think that you can be qualified to be a senior staff without being able to lie about the smallest things.
+    personality.ALTRUISM=30
+    personality.COOPERATION=65 --immortality will do that for you a bit, I imagine
+    personality.MODESTY=0 --hehe
+    personality.SYMPATHY=50
+    personality.SELF_EFFICACY=78
+    personality.ORDERLINESS=15
+    personality.DUTIFULNESS=90
+    personality.ACHIEVEMENT_STRIVING=50
+    personality.SELF_DISCIPLINE=95
+    personality.CAUTIOUSNESS=10
 end
 
 function doctorBrightTakeOver(unit)
-	local oldFig=df.historical_figure.find(unit.hist_figure_id)
-	fig,unit.hist_figure_id=jackBrightHistFig()
-	fig.civ_id=oldFig.civ_id
-	fig.population_id=oldFig.population_id -- yeah, not right, but necessary
-	local allUnitNames={
-	unit.name,
-	unit.status.current_soul.name
-	}
-	local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')} --BRIGHT is within the sorted words, so it's good.
-	brightWord=brightWord[3]
-	for k,v in ipairs(allUnitNames) do
-		for kk,vv in ipairs(v.words) do
-			vv=-1
-			v.parts_of_speech[kk]=-1
-		end
-		v.words[0]=brightWord
-		v.parts_of_speech[0]=2
-		v.first_name="dr. jack"
-	end
+    local oldFig=df.historical_figure.find(unit.hist_figure_id)
+    fig,unit.hist_figure_id=jackBrightHistFig()
+    fig.civ_id=oldFig.civ_id
+    fig.population_id=oldFig.population_id -- yeah, not right, but necessary
+    local allUnitNames={
+    unit.name,
+    unit.status.current_soul.name
+    }
+    local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')} --BRIGHT is within the sorted words, so it's good.
+    brightWord=brightWord[3]
+    for k,v in ipairs(allUnitNames) do
+        for kk,vv in ipairs(v.words) do
+            vv=-1
+            v.parts_of_speech[kk]=-1
+        end
+        v.words[0]=brightWord
+        v.parts_of_speech[0]=2
+        v.first_name="dr. jack"
+    end
+    local soul = unit.status.current_soul
+    for i=#soul.skills-1,0,-1 do
+        soul.skills:erase(i) --gotta erase all the skills to put the new one in
+    end
+    soul.skills:insert('#',{new=df.unit_skill,id=15,rating=15})
+    setBrightPersonality(soul.traits)
 end
-]]
+
+eventful.onInventoryChange.SCP_963=function(unit_id,item_id,old_equip,new_equip)
+    if not new_equip then return false end
+    local item=df.item.find(item_id)
+    if not df.item_amuletst:is_instance(item) then return false end
+    if dfhack.matinfo.getToken(dfhack.matinfo.decode(item))=='INORGANIC:SCP_963' then
+        local unit=df.unit.find(unit_id)
+        doctorBrightTakeOver(unit) 
+    end
+end
+
+----------------------------------------
+--------------- SCP-458 ----------------
+----------------------------------------
+function SCP_458(reaction,unit,input_items,input_reagents,output_items,call_native)
+    local mattype,matindex
+    for k,preference in ipairs(unit.status.current_soul.preferences) do
+        if preference.type==2 and dfhack.matinfo.decode(preference.mattype,preference.matindex).material.heat.melting_point>10020 then
+            mattype,matindex=preference.mattype,preference.matindex
+            break
+        end
+    end
+    if mattype then
+        for k,v in ipairs(df.global.world.raws.reactions) do
+            if v.code:find('SCP_458_GENERATE_PIZZA') then
+                for _,product in ipairs(v.products) do
+                    product.mat_type=mattype
+                    product.mat_index=matindex
+                end
+            end
+        end
+    else
+        
+    end
+end
+eventful.registerReaction('LUA_HOOK_SET_PIZZA_TYPE_458',SCP_458)
