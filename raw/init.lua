@@ -76,6 +76,7 @@ local function initializeCorpseCheck(corpse,ArgDelayTicks)
     corpsesToCheck[corpse.id]={delayTicks=2,corpseID=corpse.id}
     corpsesToCheck[corpse.id].checkFor447=function(self)
         local corpse=df.item.find(self.corpseID)
+        if not corpse then return false end
         if not (corpse.flags.in_inventory or corpse.flags.in_building) then 
             if corpse.contaminants then
                 for k,contaminant in ipairs(corpse.contaminants) do
@@ -243,16 +244,19 @@ eventful.registerReaction('LUA_HOOK_SCP_294_SELECT_LIQUID_FOR_DISPENSING',SCP_29
 ----------------------------------------
 
 function getFoundationRace()
+    local utils=require'utils'
     local race,ok=utils.binsearch(df.global.world.raws.creatures.alphabetic,'foundation member','name',utils.compare_field_key(0))
     return ok and df.global.world.raws.creatures.list_creature[race.caste[0].index] or 0
 end
 
 function jackBrightHistFig()
+    local utils=require'utils'
     i=#df.global.world.history.figures-1,0,-1 do
         local fig = df.global.world.history.figures[i]
         if fig.name.first_name=="dr. jack" then return fig,fig.id end
     end
     local brightFig=df.global.world.history.figures:insert('#',{new=df.historical_figure,profession=68,race=getFoundationRace(),caste=5,sex=1,appeared_year=df.global.cur_year-30,born_year=df.global.cur_year-30,born_seconds=0,old_year=-1,id=df.global.hist_figure_next_id})
+    brightFig=df.global.world.history.figures[#df.global.world.history.figures-1]
     df.global.hist_figure_next_id=df.global.hist_figure_next_id+1
     brightFig.name.first_name='dr. jack'
     local brightWord={utils.binsearch(df.global.world.raws.language.words,'BRIGHT','word')}
@@ -270,7 +274,7 @@ function setBrightPersonality(personality) --this will all be invalid in a month
     personality.ANXIETY=20
     personality.ANGER=30
     personality.DEPRESSION=50
-    personality.SELF_CONSCOUSNESS=3
+    personality.SELF_CONSCIOUSNESS=3
     personality.IMMODERATION=87
     personality.STRESS=10
     personality.FRIENDLINESS=75 --the descriptions given in-game doesn't say if it's a good kind of friendly :V
@@ -300,8 +304,10 @@ function setBrightPersonality(personality) --this will all be invalid in a month
 end
 
 function doctorBrightTakeOver(unit)
+    local utils=require'utils'
     local oldFig=df.historical_figure.find(unit.hist_figure_id)
     fig,unit.hist_figure_id=jackBrightHistFig()
+    unit.hist_figure_id2=unit.hist_figure_id
     fig.civ_id=oldFig.civ_id
     fig.population_id=oldFig.population_id -- yeah, not right, but necessary
     local allUnitNames={
@@ -319,6 +325,8 @@ function doctorBrightTakeOver(unit)
         v.parts_of_speech[0]=2
         v.first_name="dr. jack"
     end
+    fig.name.language=oldFig.name.language
+    fig.name.has_name=true
     local soul = unit.status.current_soul
     for i=#soul.skills-1,0,-1 do
         soul.skills:erase(i) --gotta erase all the skills to put the new one in
@@ -343,7 +351,8 @@ end
 function SCP_458(reaction,unit,input_items,input_reagents,output_items,call_native)
     local mattype,matindex
     for k,preference in ipairs(unit.status.current_soul.preferences) do
-        if preference.type==2 and dfhack.matinfo.decode(preference.mattype,preference.matindex).material.heat.melting_point>10020 then
+        if not preference then call_native=false return nil end
+        if preference.type==2 and dfhack.matinfo.decode(preference.mattype,preference.matindex) and dfhack.matinfo.decode(preference.mattype,preference.matindex).material.heat.melting_point>10020 then
             mattype,matindex=preference.mattype,preference.matindex
             break
         end
@@ -354,11 +363,23 @@ function SCP_458(reaction,unit,input_items,input_reagents,output_items,call_nati
                 for _,product in ipairs(v.products) do
                     product.mat_type=mattype
                     product.mat_index=matindex
+                    product.item_type=71
+                    product.item_subtype=3
                 end
             end
         end
     else
-        
+        call_native=false
     end
 end
+
+eventful.enableEvent(eventful.eventType.ITEM_CREATED,4)
+
+eventful.onItemCreated.SCP_458=function(item_id)
+    local item=df.item.find(item_id)
+    if not df.item_foodst:is_instance(item) or item.subtype.id~='458_PIZZA' then return nil end
+    item.ingredients:insert('#',{new=df.item_foodst.T_ingredients,item_type=df.item_type.CHEESE})
+    item.ingredients:insert('#',{new=df.item_foodst.T_ingredients,item_type=df.item_type.CHEESE,mat_index=item.mat_index,mat_type=item.mat_type})
+end
+
 eventful.registerReaction('LUA_HOOK_SET_PIZZA_TYPE_458',SCP_458)
