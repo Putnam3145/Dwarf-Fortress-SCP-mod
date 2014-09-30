@@ -24,7 +24,7 @@ function getDrainAmount(products)
 end
 
 function itemIsRechargeableBattery(item)
-    return (itemIsBattery(item) and string.find(string.lower(item.subtype.name[0]),"recharge"))
+    return (itemIsBattery(item) and string.find(string.lower(item.subtype.name[0]),"recharg"))
 end
 
 function getBatteryCharge(battery)
@@ -38,7 +38,7 @@ function chargeBattery(reaction,unit,input_items,input_reagents,output_items,cal
 end
 
 function getCharge(reaction,unit,input_items,input_reagents,output_items,call_native)
-    dfhack.gui.showAnnouncement("Battery is at " .. dfhack.items.getGeneralRef(getBattery(input_items),56).race/100 .. "% power!")
+    dfhack.gui.makeAnnouncement(df.announcement_type.LOSE_EMOTION,{D_DISPLAY=true,A_DISPLAY=true},unit.pos,"Battery is at " .. dfhack.items.getGeneralRef(getBattery(input_items),56).race/100 .. "% power!")
 end
 
 function drainBattery(reaction,unit,input_items,input_reagents,output_items,call_native)
@@ -48,7 +48,7 @@ function drainBattery(reaction,unit,input_items,input_reagents,output_items,call
     if power.race<0 then
         power.race=0
         call_native.value=false
-        dfhack.gui.showAnnouncement(dfhack.TranslateName(unit.name) .. "cancels job: battery needs recharging",COLOR_RED,true)
+        dfhack.gui.makeAnnouncement(df.announcement_type.CANCEL_JOB,{D_DISPLAY=true,A_DISPLAY=true},unit.pos,dfhack.TranslateName(dfhack.units.getVisibleName(unit)) .. "cancels job: battery needs recharging",COLOR_RED,true)
     end
 end
 
@@ -67,8 +67,9 @@ local scp_447_index=dfhack.matinfo.find("SCP_447_2").index
 
 local corpsesToCheck={}
 
-local function forceGameOver(message)
-    if message then dfhack.gui.showPopupAnnouncement(message,12) end
+local function forceGameOver(message,pos)
+    local pos=pos or {x=1,y=1,z=1}
+    if message then dfhack.gui.makeAnnouncement(df.announcement_type.ENDGAME_EVENT_2,{D_DISPLAY=true,A_DISPLAY=true,PAUSE=true,DO_MEGA=true},message,12) end
     dfhack.timeout(1,'ticks',function() df.global.ui.game_over = true end)
 end
 
@@ -101,7 +102,7 @@ local function initializeCorpseChecks()
     local totalDelayTicks=1
     for _,corpse in ipairs(df.global.world.items.other.ANY_CORPSE) do
         initializeCorpseCheck(corpse,totalDelayTicks)
-        totalDelayTicks=totalDelayTicks+2
+        totalDelayTicks=totalDelayTicks+1
     end
 end
 
@@ -270,42 +271,72 @@ function jackBrightHistFig()
     return brightFig,brightFig.id
 end
 
-function setBrightPersonality(personality) --this will all be invalid in a month or so...
-    personality.ANXIETY=20
-    personality.ANGER=30
-    personality.DEPRESSION=50
-    personality.SELF_CONSCIOUSNESS=3
-    personality.IMMODERATION=87
-    personality.STRESS=10
-    personality.FRIENDLINESS=75 --the descriptions given in-game doesn't say if it's a good kind of friendly :V
-    personality.GREGARIOUSNESS=75
-    personality.ASSERTIVENESS=100
-    personality.ACTIVITY_LEVEL=100
-    personality.EXCITEMENT_SEEKING=100
-    personality.CHEERFULNESS=15
-    personality.IMAGINATION=80
-    personality.ARTISTIC_INTEREST=45
-    personality.EMOTIONALITY=60
-    personality.ADVENTUROUSNESS=90
-    personality.INTELLECTUAL_CURIOSITY=90
-    personality.LIBERALISM=90
-    personality.TRUST=50
-    personality.STRAIGHTFORWARDNESS=1 --I don't think that you can be qualified to be a senior staff without being able to lie about the smallest things.
-    personality.ALTRUISM=30
-    personality.COOPERATION=65 --immortality will do that for you a bit, I imagine
-    personality.MODESTY=0 --hehe
-    personality.SYMPATHY=50
-    personality.SELF_EFFICACY=78
-    personality.ORDERLINESS=15
-    personality.DUTIFULNESS=90
-    personality.ACHIEVEMENT_STRIVING=50
-    personality.SELF_DISCIPLINE=95
-    personality.CAUTIOUSNESS=10
+function setPersonalValue(personality,value,strength)
+    personality.values:insert('#',{new=true,type=df.value_type[value],strength=strength})
+end
+
+function setBrightPersonality(personality)
+    setPersonalValue(personality,'MERRIMENT',30)
+    setPersonalValue(personality,'HARMONY',-5)
+    setPersonalValue(personality,'COMMERCE',20)
+    setPersonalValue(personality,'DECORUM',-25)
+    local traits=personality.traits
+    traits.LOVE_PROPENSITY=15
+    traits.HATE_PROPENSITY=60
+    traits.ENVY_PROPENSITY=40
+    traits.CHEER_PROPENSITY=68
+    traits.DEPRESSION_PROPENSITY=50
+    traits.ANGER_PROPENSITY=30
+    traits.ANXIETY_PROPENSITY=20
+    traits.LUST_PROPENSITY=65 --There is no market for SCP brand pornography.
+    traits.STRESS_VULNERABILITY=5
+    traits.GREED=60
+    traits.IMMODERATION=65
+    traits.VIOLENT=50
+    traits.PERSEVERENCE=40
+    traits.WASTEFULNESS=80
+    traits.DISCORD=75
+    traits.FRIENDLINESS=39
+    traits.POLITENESS=30
+    traits.DISDAINS_ADVICE=60
+    traits.BRAVERY=100
+    traits.CONFIDENCE=80
+    traits.VANITY=50
+    traits.AMBITION=35
+    traits.GRATITUDE=40
+    traits.IMMODESTY=50
+    traits.HUMOR=75
+    traits.VENGEFUL=50
+    traits.PRIDE=75
+    traits.CRUELTY=61
+    traits.SINGLEMINDED=50
+    traits.HOPEFUL=15
+    traits.CURIOUS=70
+    traits.BASHFUL=10
+    traits.PRIVACY=10
+    traits.PERFECTIONIST=40
+    traits.CLOSEMINDED=50
+    traits.TOLERANT=80
+    traits.EMOTIONALLY_OBSESSIVE=15
+    traits.SWAYED_BY_EMOTIONS=10
+    traits.ALTRUISM=30
+    traits.DUTIFULNESS=90
+    traits.THOUGHTLESSNESS=40
+    traits.ORDERLINESS=40
+    traits.TRUST=20
+    traits.GREGARIOUSNESS=50
+    traits.ASSERTIVENESS=76
+    traits.ACTIVITY_LEVEL=100
+    traits.EXCITEMENT_SEEKING=80
+    traits.IMAGINATION=80
+    traits.ABSTRACT_INCLINED=40
+    traits.ARTISTIC_INCLINED=45
 end
 
 function doctorBrightTakeOver(unit)
     local utils=require'utils'
     local oldFig=df.historical_figure.find(unit.hist_figure_id)
+    local fig
     fig,unit.hist_figure_id=jackBrightHistFig()
     unit.hist_figure_id2=unit.hist_figure_id
     fig.civ_id=oldFig.civ_id
@@ -331,15 +362,16 @@ function doctorBrightTakeOver(unit)
     for i=#soul.skills-1,0,-1 do
         soul.skills:erase(i) --gotta erase all the skills to put the new one in
     end
-    soul.skills:insert('#',{new=df.unit_skill,id=15,rating=15})
-    setBrightPersonality(soul.traits)
+    soul.skills:insert('#',{new=df.unit_skill,id=df.job_skill.ALCHEMY,rating=15})
+    setBrightPersonality(soul.personality)
 end
+
+eventful.enableEvent(eventful.eventType.INVENTORY_CHANGE,5)
 
 eventful.onInventoryChange.SCP_963=function(unit_id,item_id,old_equip,new_equip)
     if not new_equip then return false end
     local item=df.item.find(item_id)
-    if not df.item_amuletst:is_instance(item) then return false end
-    if dfhack.matinfo.getToken(dfhack.matinfo.decode(item))=='INORGANIC:SCP_963' then
+    if df.item_amuletst:is_instance(item) and dfhack.matinfo.getToken(dfhack.matinfo.decode(item))=='INORGANIC:SCP_963' then
         local unit=df.unit.find(unit_id)
         doctorBrightTakeOver(unit) 
     end
@@ -373,7 +405,7 @@ function SCP_458(reaction,unit,input_items,input_reagents,output_items,call_nati
     end
 end
 
-eventful.enableEvent(eventful.eventType.ITEM_CREATED,4)
+eventful.enableEvent(eventful.eventType.ITEM_CREATED,1) --I don't see any linear searches through entire vectors, so it should be fine
 
 eventful.onItemCreated.SCP_458=function(item_id)
     local item=df.item.find(item_id)

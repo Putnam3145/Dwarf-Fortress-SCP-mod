@@ -59,19 +59,23 @@ reaction_scp_safe
 Very fine is coming later, I'm desperate for release now, so I'm removing pretty much all stuff that would require me to make more stuff.
 
 [REACTION:METAL_BAR_ROUGH]
-	[NAME:put a metal bar in on rough]
+	[NAME:put some metal bars in on rough]
 	[BUILDING:SCP_914:NONE]
 	[REAGENT:A:600:BAR:NONE:INORGANIC:NONE]
 	[PRODUCT:100:1:BOULDER:NONE:GET_MATERIAL_FROM_REAGENT:A:ORE_MAT]
 
 1:1 would be pretty useless.
 
-Fine made crafts, but wasn't working, so I nixed it out of wanting to release quicker.
+[REACTION:METAL_BAR_FINE]
+    [NAME:put some metal bars in on fine]
+	[BUILDING:SCP_914:NONE]
+	[REAGENT:A:600:BAR:NONE:INORGANIC:NONE]
+	[PRODUCT:100:1:GET_ITEM_DATA_FROM_REAGENT:A:MOST_EFFECTIVE_ITEM:GET_MATERIAL_FROM_REAGENT:A:NONE]
 
-[REACTION:MULTIPLE_METAL_BARS]
-	[NAME:put two metal bars in on very fine]
+[REACTION:MULTIPLE_METAL_BARS_914]
+	[NAME:put ten metal bars in on very fine]
 	[BUILDING:SCP_914:CUSTOM_T]
-	[REAGENT:A:300:BAR:NONE:INORGANIC:NONE]
+	[REAGENT:A:1500:BAR:NONE:INORGANIC:NONE]
 	[PRODUCT:100:1:BAR:NONE:INORGANIC:TELEKILL][PRODUCT_DIMENSION:150]
 
 No rough or coarse because boulders are about as rough as they get.

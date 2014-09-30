@@ -1,0 +1,1 @@
+modtools/interaction-trigger -onDefendStr "check for being seen" -suppressDefend -command [ scp/look_actions -looker \\ATTACKER_ID -lookee \\DEFENDER_ID ]

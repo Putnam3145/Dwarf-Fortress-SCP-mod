@@ -1,0 +1,27 @@
+item_automation_scp
+
+[OBJECT:ITEM]
+
+[ITEM_TOY:SULFURIC_ACID_TOKEN_SCP]
+	[NAME:sulfuric acid request token]
+
+[ITEM_TOY:HYDROCHLORIC_ACID_TOKEN_SCP]
+	[NAME:hydrochloric acid request token]
+	
+[ITEM_TOY:MONAZITE_TOKEN_SCP]
+	[NAME:monazite request token]
+	
+[ITEM_TOY:BASTNÄSITE_TOKEN_SCP]
+	[NAME:bastn„site request token]
+	
+[ITEM_TOY:REQUEST_AESCHYNITE_SCP]
+	[NAME:aeschynite request token]
+	
+[ITEM_TOY:REQUEST_EUXENITE_SCP]
+	[NAME:euxenite request token]
+	
+[ITEM_TOY:ONE_USE_BATTERY_TOKEN]
+	[NAME:disposable battery request token]
+	
+[ITEM_TOY:RECHARGABLE_BATTERY_TOKEN]
+	[NAME:rechargeable battery request token]

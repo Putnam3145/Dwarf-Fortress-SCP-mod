@@ -32,10 +32,9 @@ reaction_power_science
 
 	
 [REACTION:LUA_HOOK_RECHARGE_BATTERY]
-	[NAME:recharge battery with rare earth]
+	[NAME:recharge battery using power]
 	[BUILDING:MILLSTONE:CUSTOM_E]
 	[REAGENT:A:1:TOOL:BATTERY_RECHARGEABLE:NONE:NONE][PRESERVE_REAGENT]
-	[REAGENT:B:150:BAR:NONE:NONE:NONE][REACTION_CLASS:RARE_EARTH] Mostly because infinite power is kind of annoying to think about.
 	
 [REACTION:LUA_HOOK_RECHARGE_BATTERY_FUEL]
 	[NAME:recharge battery with fuel]
@@ -66,4 +65,4 @@ reaction_power_science
 [REACTION:LUA_HOOK_CHECK_BATTERY_POWER_P]
 	[NAME:check power on a battery]
 	[BUILDING:CHEMISTRY_LAB:NONE]
-	[REAGENT:A:1:NONE:NONE:INORGANIC:BATTERY_P]
+	[REAGENT:A:1:NONE:NONE:INORGANIC:BATTERY_P][PRESERVE_REAGENT]
