@@ -27,14 +27,14 @@ reaction_scp_safe
 	[NAME:put in a weapon on very fine]
 	[BUILDING:SCP_914:NONE]
 	[REAGENT:A:1:WEAPON:NONE:INORGANIC:NONE]
-	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_LIGHTSABER:INORGANIC:LIGHT] Sword, Star Wars!
-	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_HEAVEN_DRILL:INORGANIC:SPIRAL_ENERGY] Spear, TTGL!
-	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_NYOI_BO:INORGANIC:NYOI] Mace, Dragon Ball/Journey to the west!
-	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_DEMONBANE:INORGANIC:SPECIAL_SHARP] Axe, Homestuck!
-	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_MJOLNIR:INORGANIC:GODLY] Hammer, Norse mythology!
+	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_LIGHTSABER:INORGANIC:LIGHT] Sword, Star Wars
+	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_HEAVEN_DRILL:INORGANIC:SPIRAL_ENERGY] Spear, TTGL
+	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_NYOI_BO:INORGANIC:NYOI] Mace, Dragon Ball/Journey to the west
+	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_DEMONBANE:INORGANIC:SPECIAL_SHARP] Axe, Homestuck
+	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_MJOLNIR:INORGANIC:GODLY] Hammer, Norse mythology
 	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_SCP_PISTOL:GET_MATERIAL_FROM_REAGENT:A:NONE] Whatever its number is. Either way, it's a good result.
 	[PRODUCT:1:1:WEAPON:ITEM_WEAPON_RIFLE_SCP:GET_MATERIAL_FROM_REAGENT:A:NONE]
-	[PRODUCT:80:1:BOULDER:NONE:INORGANIC:ABLE] Hehehe. You'd better keep SCP-914 well-contained.
+	[PRODUCT:20:1:BOULDER:NONE:INORGANIC:ABLE] Hehehe. You'd better keep SCP-914 well-contained.
 
 [REACTION:ARMOR_SCP_914_ROUGH]
 	[NAME:put body armor in on rough]
@@ -51,7 +51,7 @@ reaction_scp_safe
 	[REAGENT:A:1:ARMOR:NONE:INORGANIC:NONE]
 	[PRODUCT:100:1:ARMOR:ITEM_ARMOR_BREASTPLATE:INORGANIC:IRON] Compared to what your agents will be wearing...
 [REACTION:ARMOR_SCP_914_1:1]
-	[NAME:putbody armor in on 1:1]
+	[NAME:put body armor in on 1:1]
 	[BUILDING:SCP_914:CUSTOM_A]
 	[REAGENT:A:1:ARMOR:NONE:INORGANIC:NONE]
 	[PRODUCT:100:1:ARMOR:NONE:GET_MATERIAL_FROM_REAGENT:A:NONE] There's a chance of getting a breastplate or {DATA EXPUNGED} from this, which I can't reconcile. Sorry.
@@ -96,7 +96,7 @@ No rough or coarse because boulders are about as rough as they get.
 	[NAME:put a boulder in on very fine]
 	[BUILDING:SCP_914:NONE]
 	[REAGENT:A:1:BOULDER:NONE:NONE:NONE]
-	[PRODUCT:100:1:BOULDER:NONE:INORGANIC:SLADE] Yes, you can put slade in on fine and get a bar out of it. No, I wouldn't recommend it. The slade hammer will be so strong it will count as an SCP by itself, but the results of the gas are be disastrous.
+	[PRODUCT:100:1:BOULDER:NONE:INORGANIC:SLADE] Yes, you can put slade in on fine and get a bar out of it. No, I wouldn't recommend it.
 	
 [REACTION:786_G]
 	[NAME:grow someone with SCP-786]

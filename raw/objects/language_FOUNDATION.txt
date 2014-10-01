@@ -2169,7 +2169,7 @@ language_FOUNDATION
 	[T_WORD:YEARLING:pvc]
 	[T_WORD:YELL:itand]
 	[T_WORD:YELLOW:bom]
-	[T_WORD:YOR:çno]
+	T_WORD:YOR:çno
 	[T_WORD:YOUNG:içage]
 	[T_WORD:YOUTH:whair]
 	[T_WORD:ZEAL:apo]
