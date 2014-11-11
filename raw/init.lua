@@ -208,7 +208,7 @@ function findMaterialGivenPlainLanguageString(str)
     return false,false
 end
 
-local script=require('gui/script')
+local script=require('gui.script')
 
 function SCP_294(reaction,unit,input_items,input_reagents,output_items,call_native)
     script.start(function()
